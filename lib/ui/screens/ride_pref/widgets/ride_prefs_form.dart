@@ -1,3 +1,9 @@
+import 'package:blablacar/ui/widgets/actions/bla_button.dart';
+import 'package:blablacar/ui/widgets/actions/bla_switch_button.dart';
+import 'package:blablacar/ui/widgets/display/bla_divider.dart';
+import 'package:blablacar/ui/widgets/inputs/bla_date_tile.dart';
+import 'package:blablacar/ui/widgets/inputs/bla_location_tile.dart';
+import 'package:blablacar/ui/widgets/inputs/bla_passenger_tile.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../model/ride/locations.dart';
@@ -36,15 +42,31 @@ class _RidePrefFormState extends State<RidePrefForm> {
   void initState() {
     super.initState();
     // TODO
+    if (widget.initRidePref != null) {
+      departure = widget.initRidePref!.departure;
+      departureDate = widget.initRidePref!.departureDate;
+      arrival = widget.initRidePref!.arrival;
+      requestedSeats = widget.initRidePref!.requestedSeats;
+    } else {
+      departureDate = DateTime.now();
+      requestedSeats = 1;
+    }
   }
 
   // ----------------------------------
   // Handle events
   // ----------------------------------
+  void onSwitch() {
+    Location? temp = arrival;
+    setState(() {
+      arrival = departure;
+      departure = temp;
+    });
+  }
 
   // ----------------------------------
   // Compute the widgets rendering
-  // ----------------------------------
+  // ---------------------------------- 
 
   // ----------------------------------
   // Build the widgets
@@ -54,8 +76,25 @@ class _RidePrefFormState extends State<RidePrefForm> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [ 
-        
-        ]);
+      children: [
+        BlaLocationTile(
+          location: departure,
+          type: LocationType.departure,
+          onPressed: () {},
+          trailingIcon: BlaSwitchButton(onPressed: onSwitch),
+        ),
+        BlaDivider(),
+        BlaLocationTile(
+          location: arrival,
+          type: LocationType.arrival,
+          onPressed: onSwitch,
+        ),
+        BlaDivider(),
+        BlaDateTile(date: departureDate, onPressed: () {}),
+        BlaDivider(),
+        BlaPassengerTile(numberOfPassenger: requestedSeats, onPressed: () {}),
+        BlaButton(onPressed: () {}, text: "Search"),
+      ],
+    );
   }
 }
