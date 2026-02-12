@@ -1,3 +1,4 @@
+import 'package:blablacar/ui/screens/location_picker/location_picker_screen.dart';
 import 'package:blablacar/ui/widgets/actions/bla_button.dart';
 import 'package:blablacar/ui/widgets/actions/bla_switch_button.dart';
 import 'package:blablacar/ui/widgets/display/bla_divider.dart';
@@ -34,6 +35,24 @@ class _RidePrefFormState extends State<RidePrefForm> {
   Location? arrival;
   late int requestedSeats;
 
+  Future<void> onSelectLocation({required bool isDeparture}) async {
+    final result = await Navigator.push<Location>(
+      context,
+      MaterialPageRoute<Location>(
+        builder: (ctx) => const LocationPickerScreen(),
+      ),
+    );
+    if (result != null) {
+      setState(() {
+        if (isDeparture) {
+          departure = result;
+        } else {
+          arrival = result;
+        }
+      });
+    }
+  }
+
   // ----------------------------------
   // Initialize the Form attributes
   // ----------------------------------
@@ -66,7 +85,7 @@ class _RidePrefFormState extends State<RidePrefForm> {
 
   // ----------------------------------
   // Compute the widgets rendering
-  // ---------------------------------- 
+  // ----------------------------------
 
   // ----------------------------------
   // Build the widgets
@@ -80,14 +99,14 @@ class _RidePrefFormState extends State<RidePrefForm> {
         BlaLocationTile(
           location: departure,
           type: LocationType.departure,
-          onPressed: () {},
+          onPressed: () => onSelectLocation(isDeparture: true),
           trailingIcon: BlaSwitchButton(onPressed: onSwitch),
         ),
         BlaDivider(),
         BlaLocationTile(
           location: arrival,
           type: LocationType.arrival,
-          onPressed: onSwitch,
+          onPressed: () => onSelectLocation(isDeparture: false),
         ),
         BlaDivider(),
         BlaDateTile(date: departureDate, onPressed: () {}),
